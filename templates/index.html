@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vidyarthi Portal — PM Shri KV AFS Wadsar</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HEADER ═══════════════════════════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="logo-emblem">🏫</div>
+      <div class="logo-text">
+        <span class="logo-school">PM Shri Kendriya Vidyalaya AFS Wadsar</span>
+        <span class="logo-portal">Vidyarthi Portal</span>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#upload-section">Upload</a>
+      <a href="#analytics-section">Analytics</a>
+      <a href="#students-section">Students</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════ HERO ════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Student Profile Management</h1>
+    <p>Upload the student Excel sheet to generate analytics, individual profile cards, and a single merged PDF for all students.</p>
+  </div>
+  <div class="hero-badges">
+    <span class="badge badge-blue">📊 Analytics</span>
+    <span class="badge badge-green">📄 PDF Profiles</span>
+    <span class="badge badge-orange">🔗 Bulk Export</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ UPLOAD SECTION ══════════════════════════════ -->
+<main class="container">
+
+  <section id="upload-section" class="card">
+    <h2 class="card-title">
+      <span class="icon">📁</span> Upload Student Data
+    </h2>
+
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon">📂</div>
+      <p class="upload-hint">Drag &amp; drop your <strong>.xlsx</strong> file here</p>
+      <p class="upload-hint-small">or</p>
+      <label class="btn btn-primary" for="fileInput">Choose File</label>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" hidden />
+      <p class="upload-filename" id="uploadFilename"></p>
+    </div>
+
+    <div class="upload-actions">
+      <button class="btn btn-upload" id="btnUpload" disabled>
+        <span class="btn-icon">⬆️</span> Upload &amp; Analyse
+      </button>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-wrap" id="progressWrap" hidden>
+      <div class="progress-bar" id="progressBar"></div>
+      <span class="progress-label" id="progressLabel">Processing…</span>
+    </div>
+  </section>
+
+<!-- ═════════════════════════════ ANALYTICS SECTION ════════════════════════════ -->
+  <section id="analytics-section" class="analytics-section" hidden>
+
+    <!-- Summary cards -->
+    <h2 class="section-heading">
+      <span class="icon">📊</span> Analytics Overview
+    </h2>
+    <div class="summary-grid" id="summaryGrid">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Charts row -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Gender Distribution</h3>
+        <canvas id="chartGender"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Caste / Category</h3>
+        <canvas id="chartCaste"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Religion</h3>
+        <canvas id="chartReligion"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Subjects Opted</h3>
+        <canvas id="chartSubjects"></canvas>
+      </div>
+    </div>
+
+    <!-- Age chart -->
+    <div class="chart-card chart-card-wide">
+      <h3>Age Distribution (years)</h3>
+      <canvas id="chartAge"></canvas>
+    </div>
+
+  </section>
+
+<!-- ═══════════════════════════════ STUDENTS TABLE ══════════════════════════════ -->
+  <section id="students-section" class="card students-section" hidden>
+    <div class="students-header">
+      <h2 class="card-title">
+        <span class="icon">👩‍🎓</span> Student Directory
+      </h2>
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Search by name, subject, caste…" />
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="students-table" id="studentsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Father's Name</th>
+            <th>Gender</th>
+            <th>DOB</th>
+            <th>Caste</th>
+            <th>Religion</th>
+            <th>Subject</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="studentsBody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+<!-- ═══════════════════════════════ GENERATE PDF ════════════════════════════════ -->
+  <section id="generate-section" class="card generate-section" hidden>
+    <h2 class="card-title">
+      <span class="icon">📄</span> Generate Student Profiles PDF
+    </h2>
+    <p class="generate-desc">
+      Click the button below to generate individual profile pages for <strong id="genCount">all</strong> students and export them as a single merged PDF — exactly matching the official profile format.
+    </p>
+    <div class="generate-actions">
+      <button class="btn btn-generate" id="btnGenerate">
+        <span class="btn-icon">🖨️</span> Generate &amp; Merge PDF
+      </button>
+      <button class="btn btn-download" id="btnDownload" hidden>
+        <span class="btn-icon">⬇️</span> Download PDF
+      </button>
+    </div>
+    <div class="generate-status" id="generateStatus"></div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════ FOOTER ══════════════════════════════════ -->
+<footer class="site-footer">
+  <p>© 2026 PM Shri Kendriya Vidyalaya AFS Wadsar &nbsp;|&nbsp; Vidyarthi Portal</p>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
